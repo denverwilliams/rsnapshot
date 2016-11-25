@@ -1,5 +1,4 @@
-FROM blacklabelops/alpine
-MAINTAINER Steffen Bleul <blacklabelops@itbleul.de>
+FROM alpine:3.4
 
 # rsnapshot version (e.g. 1.4.2-r0)
 ARG RSNAPSHOT_VERSION=latest
@@ -9,6 +8,10 @@ COPY configuration/rsnapshot.conf.default /etc/rsnapshot.conf
 COPY imagescripts /usr/bin/rsnapshot.d
 
 RUN apk upgrade --update && \
+    apk add \
+      bash && \
+          # Network fix
+    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \
     if  [ "${RSNAPSHOT_VERSION}" = "latest" ]; \
       then apk add rsnapshot ; \
       else apk add "rsnapshot=${RSNAPSHOT_VERSION}" ; \
