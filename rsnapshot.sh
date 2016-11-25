@@ -214,6 +214,8 @@ EOF
 
 set -e
 
+source /home/rsnapshot/cron.sh
+
 source /home/rsnapshot/env.sh
 
 if [ "$1" = 'rsnapshot' ]; then
