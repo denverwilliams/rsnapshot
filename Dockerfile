@@ -8,4 +8,8 @@ WORKDIR /home/rsnapshot
 
 COPY . /home/rsnapshot
 
+RUN chmod +x ./rsnapshot.sh
+
 ENTRYPOINT ["/home/rsnapshot/rsnapshot.sh"]
+
+CMD ["rsnapshotd"]

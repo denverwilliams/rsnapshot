@@ -31,14 +31,34 @@ backup_dirs=""
 if [ -n "${BACKUP_DIRECTORIES}" ]; then
   backup_dirs=${BACKUP_DIRECTORIES}
 fi
+
+if [ -n "${SSH_KEY}" ]; then
+    which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    eval $(ssh-agent -s)
+    ssh-add <(echo "$SSH_KEY")
+    mkdir -p ~/.ssh
+    echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+fi
+
+if [ -n "/home/rsnapshot/key/rsnapshot" ]; then
+    which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    eval $(ssh-agent -s)
+    export SSH_PRIVATE="(cat /home/rsnapshot/key/rsnapshot)"
+    ssh-add <(echo "$SSH_PRIVATE")
+    mkdir -p ~/.ssh
+    echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+fi
+
 SAVEIFS=$IFS
 IFS=';'
+
 for dir in $backup_dirs
 do
   tab_dir=$(sed -e 's/ [ ]*/\t/g' <<< $dir )
   echo -e backup'\t'$tab_dir >> /etc/rsnapshot.conf
 done
 IFS=$SAVEIFS
+
 if [ -n "${DELAYED_START}" ]; then
   sleep ${DELAYED_START}
 fi
