@@ -116,10 +116,10 @@ lockfile	/var/run/rsnapshot.pid
 # Default rsync args. All rsync commands have at least these options set.
 #
 rsync_short_args	-avHz
-rsync_long_args     --stats --delete --numeric-ids --relative --delete-excluded
+rsync_long_args		--stats	--delete	--numeric-ids	--relative	--delete-excluded
 # ssh has no args passed by default, but you can specify some here.
 #
-#ssh_args	-p 22
+ssh_args	-p 2222
 # Default arguments for the "du" program (for disk space reporting).
 # The GNU version of "du" is preferred. See the man page for more details.
 # If your version of "du" doesn't support the -h flag, try -k flag instead.
@@ -214,11 +214,15 @@ EOF
 
 set -e
 
-source /home/rsnapshot/cron.sh
-
 source /home/rsnapshot/env.sh
 
 if [ "$1" = 'rsnapshot' ]; then
-  exec rsnapshot $backup_interval
+    rsnapshot $backup_interval
+
+elif [ "$1" = 'rsnapshotd' ]; then
+    #rsnapshot $backup_interval
+    source /home/rsnapshot/cron.sh
+    # -------Sleep infinity
+    sleep infinity
 fi
-exec "$@"
+
